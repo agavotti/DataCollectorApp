@@ -1,0 +1,33 @@
+﻿@using Domain.Entities
+@model List<Photo>
+
+@{
+    ViewData["Title"] = "Photos";
+    Layout = "_Layout"; 
+}
+
+<h1>Photos of Album @Model.FirstOrDefault()?.AlbumId</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>AlbumId</th>
+            <th>Thumbnail</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var photo in Model)
+        {
+            <tr>
+                <td>@photo.Id</td>
+                <td>@photo.Title</td>
+                <td>@photo.AlbumId</td>
+                <td>
+                    <img src="@photo.ThumbnailUrl" alt="Thumbnail" />
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

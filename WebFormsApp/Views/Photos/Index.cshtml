@@ -1,0 +1,39 @@
+﻿@using Domain.Entities
+@model List<Photo>
+
+@{
+    ViewData["Title"] = "Photos";
+    Layout = "_Layout";
+}
+
+<h1>Photos</h1>
+
+<form method="get" asp-controller="Albums" asp-action="Index">
+    <input type="text" name="filterTitle" value="@ViewData["filterTitle"]" placeholder="Filter by title" />
+    <input type="text" name="filterAlbum" value="@ViewData["filterAlbum"]" placeholder="Filter by album" />
+    <button type="submit">Search</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>AlbumId</th>
+            <th>Thumbnail</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var photo in Model)
+        {
+            <tr>
+                <td>@photo.Id</td>
+                <td>@photo.Title</td>
+                <td>@photo.AlbumId</td>
+                <td>
+                    <img src="@photo.ThumbnailUrl" alt="Thumbnail" />
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
