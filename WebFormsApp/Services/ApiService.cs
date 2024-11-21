@@ -73,7 +73,10 @@ namespace WebFormsApp.Services
             }
             else
             {
-                var errorMessage = await response.Content.ReadAsStringAsync();
+                var errorMessage = await response.Content.ReadAsStringAsync(); 
+                errorMessage = errorMessage.Split(":")[1];
+                errorMessage = errorMessage.Replace("\"", "").Replace("}", "");
+
                 throw new Exception($"Error al crear la foto: {errorMessage}");
             }
         }
