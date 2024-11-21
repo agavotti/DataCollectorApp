@@ -16,7 +16,33 @@ Namespace Data
         End Function
 
         Public Sub CreateAlbum(album As Album) Implements IAlbumRepository.CreateAlbum
-            Throw New NotImplementedException()
+            Dim existsQuery As String = "SELECT COUNT(*) FROM Albums WHERE Title = @Title AND UserId = @UserId"
+            Dim insertQuery As String = "INSERT INTO Albums (Title, UserId) VALUES (@Title, @UserId); SELECT SCOPE_IDENTITY();"
+
+            Using connection As New SqlConnection(_connectionString)
+
+                connection.Open()
+
+                Using checkCommand As New SqlCommand(existsQuery, connection)
+                    checkCommand.Parameters.AddWithValue("@Title", album.Title)
+                    checkCommand.Parameters.AddWithValue("@UserId", album.UserId)
+
+                    Dim count As Integer = Convert.ToInt32(checkCommand.ExecuteScalar())
+                    If count > 0 Then
+                        Throw New Exception("El álbum ya existe en la base de datos.")
+                    End If
+                End Using
+
+                Using insertCommand As New SqlCommand(insertQuery, connection)
+                    insertCommand.Parameters.AddWithValue("@Title", album.Title)
+                    insertCommand.Parameters.AddWithValue("@UserId", album.UserId)
+
+                    Dim id As Object = insertCommand.ExecuteScalar()
+                    If id IsNot Nothing Then
+                        album.Id = Convert.ToInt32(id)
+                    End If
+                End Using
+            End Using
         End Sub
 
         Public Sub UpdateAlbum(album As Album) Implements IAlbumRepository.UpdateAlbum
@@ -30,11 +56,14 @@ Namespace Data
         Public Function GetAlbums(filterTitle As String) As List(Of Album) Implements IAlbumRepository.GetAlbums
             Dim albums As New List(Of Album)()
             Using conn As New SqlConnection(_connectionString)
+
                 conn.Open()
                 Dim query = "SELECT * FROM Albums WHERE (@Title IS NULL OR Title LIKE '%' + @Title + '%')"
                 Using cmd As New SqlCommand(query, conn)
+
                     cmd.Parameters.AddWithValue("@Title", If(String.IsNullOrEmpty(filterTitle), DBNull.Value, filterTitle))
                     Using reader = cmd.ExecuteReader()
+
                         While reader.Read()
                             albums.Add(New Album() With {
                                 .Id = reader.GetInt32(0),
@@ -42,6 +71,7 @@ Namespace Data
                                 .Title = reader.GetString(2)
                             })
                         End While
+
                     End Using
                 End Using
             End Using

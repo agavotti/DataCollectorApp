@@ -1,11 +1,10 @@
-﻿namespace WebFormsApp.Models
+﻿using Domain.Entities;
+
+namespace WebFormsApp.Models
 {
     public class PhotoViewModel
     {
-        public int Id { get; set; }
-        public int AlbumId { get; set; }
-        public string Title { get; set; }
-        public string Url { get; set; }
-        public string ThumbnailUrl { get; set; }
+        public List<Photo> Photos { get; set; }
+        public string FilterTitle { get; set; }
     }
 }

@@ -34,8 +34,15 @@ public class AlbumsController : ControllerBase
     [Route("")]
     public IActionResult CreateAlbum([FromBody] Album album)
     {
-        _albumRepository.CreateAlbum(album);
-        return Created($"api/albums/{album.Id}", album);
+        try
+        {
+            _albumRepository.CreateAlbum(album);
+            return Created($"api/albums/{album.Id}", album);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
     // PUT: api/albums/{id}

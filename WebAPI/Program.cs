@@ -15,6 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IAlbumRepository>(provider => new AlbumRepository(connectionString));
+builder.Services.AddScoped<IPhotoRepository>(provider => new PhotoRepository(connectionString));
 builder.Services.AddScoped<IExternalApiService>(provider => new ExternalApiService());
 
 var app = builder.Build();

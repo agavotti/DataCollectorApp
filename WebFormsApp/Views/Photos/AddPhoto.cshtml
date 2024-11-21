@@ -1,0 +1,47 @@
+﻿@using Domain.Entities
+@model Photo
+
+@{
+    ViewData["Title"] = "Albums";
+    Layout = "_Layout";
+}
+
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <h1>Error al agregar Photo</h1>
+    <div class="alert alert-warning" role="alert">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+else
+{
+    <h1>Foto agregada</h1>
+}
+
+<table>
+    <thead>
+        <tr>
+            @if (Model.Id != 0)
+            {
+                <th>ID</th>
+            }
+            <th>Title</th>
+            <th>Album ID</th>
+            <th>ThumbnailUrl</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            @if (Model.Id != 0)
+            {
+                <td>@Model.Id</td>
+            }
+            <td>@Model.Title</td>
+            <td>@Model.AlbumId</td>
+            <td>
+                <img src="@Model.ThumbnailUrl" alt="Thumbnail" />
+            </td>
+        </tr>
+    </tbody>
+</table>

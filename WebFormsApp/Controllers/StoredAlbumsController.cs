@@ -5,18 +5,18 @@ using WebFormsApp.Services;
 
 namespace WebFormsApp.Controllers
 {
-    public class AlbumsController : Controller
+    public class StoredAlbumsController : Controller
     {
         private readonly ApiService _apiService;
 
-        public AlbumsController(ApiService apiService)
+        public StoredAlbumsController(ApiService apiService)
         {
             _apiService = apiService;
         }
 
         public async Task<IActionResult> Index(string filterTitle)
         {
-            var albums = await _apiService.GetAlbumsAsync();
+            var albums = await _apiService.GetStoredAlbumsAsync();
 
             if (!string.IsNullOrEmpty(filterTitle))
             {

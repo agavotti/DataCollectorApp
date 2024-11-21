@@ -21,7 +21,7 @@
             <th>Title</th>
             <th>AlbumId</th>
             <th>Thumbnail</th>
-            <th>Actions</th>
+
         </tr>
     </thead>
     <tbody>
@@ -34,7 +34,6 @@
                 <td>
                     <img src="@photo.ThumbnailUrl" alt="Thumbnail" />
                 </td>
-                <td><a href="@Url.Action("AddPhoto", "Photos", new { title = photo.Title, albumId = photo.AlbumId, thumbnailUrl = photo.ThumbnailUrl, url = photo.Url })">Add Photo</a></td>
             </tr>
         }
     </tbody>

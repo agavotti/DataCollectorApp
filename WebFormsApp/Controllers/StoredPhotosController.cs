@@ -5,41 +5,49 @@ using WebFormsApp.Services;
 
 namespace WebFormsApp.Controllers
 {
-    public class PhotosController : Controller
+    public class StoredPhotosController : Controller
     {
         private readonly ApiService _apiService;
 
-        public PhotosController(ApiService apiService)
+        public StoredPhotosController(ApiService apiService)
         {
             _apiService = apiService;
         }
 
-        public async Task<IActionResult> Index(string filterTitle, int? filterAlbum = null)
+        public async Task<IActionResult> Index(string filterTitle)
         {
-            var photos = await _apiService.GetPhotos();
-
+            var photos = await _apiService.GetStoredPhotosAsync();
 
             if (!string.IsNullOrEmpty(filterTitle))
             {
                 photos = photos.FindAll(a => a.Title.Contains(filterTitle, StringComparison.OrdinalIgnoreCase));
             }
 
-            if (filterAlbum != null)
-            {
-                photos = photos.FindAll(a => a.AlbumId.Equals(filterAlbum));
 
-            }
+            var viewModel = new PhotoViewModel
+            {
+
+                Photos = photos,
+                FilterTitle = filterTitle
+            };
 
             ViewData["filterTitle"] = filterTitle;
-            ViewData["filterAlbum"] = filterAlbum;
-
-
             return View(photos);
         }
 
-        public async Task<IActionResult> AddPhoto(string title, int albumId, string thumbnailUrl, string url)
+        //public async Task<IActionResult> Details(int photoId)
+        //{
+        //    var photos = await _apiService.GetPhotos();
+
+        //    photos = photos.FindAll(a => a.PhotoId.Equals(photoId));
+
+        //    return View(photos);
+        //}
+
+
+        public async Task<IActionResult> AddPhoto(string title, int albumId)
         {
-            var photo = new Photo { Title = title, AlbumId = albumId, ThumbnailUrl = thumbnailUrl, Url = url };
+            var photo = new Photo { Title = title, AlbumId = albumId };
             try
             {
                 var response = await _apiService.AddPhoto(photo);

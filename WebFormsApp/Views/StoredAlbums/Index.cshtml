@@ -6,7 +6,7 @@
     Layout = "_Layout";
 }
 
-<h1>Albums</h1>
+<h1>Albumes guardados</h1>
 
 <form method="get" asp-controller="Albums" asp-action="Index">
     <input type="text" name="filterTitle" value="@ViewData["filterTitle"]" placeholder="Filter by title" />
@@ -31,7 +31,7 @@
                 <td>@album.UserId</td>
                 <td>
                     <a href="@Url.Action("Details", "Albums", new { albumId = album.Id })">View Photos</a>
-                    <a href="@Url.Action("AddAlbum", "Albums", new { title = album.Title, userId = album.UserId })">Add album</a>
+                    <a href="@Url.Action("RemoveAlbum", "Albums", new { title = album.Title, userId = album.UserId })">Remove Album</a>
                 </td>
             </tr>
         }

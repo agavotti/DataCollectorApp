@@ -1,0 +1,43 @@
+﻿@using Domain.Entities
+@model Album
+
+@{
+    ViewData["Title"] = "Albums";
+    Layout = "_Layout";
+}
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <h1>Error al agregar el Album</h1>
+
+    <div class="alert alert-warning" role="alert">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+else
+{
+    <h1>Album agregado</h1>
+}
+
+<table>
+    <thead>
+        <tr>
+            @if (Model.Id != 0)
+            {
+                <th>ID</th>
+            }
+            <th>Title</th>
+            <th>User ID</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            @if (Model.Id != 0)
+            {
+                <td>@Model.Id</td>
+            }
+            <td>@Model.Title</td>
+            <td>@Model.UserId</td>
+        </tr>
+    </tbody>
+</table>
