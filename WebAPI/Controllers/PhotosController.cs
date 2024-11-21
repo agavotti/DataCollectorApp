@@ -47,12 +47,18 @@ public class PhotosController : ControllerBase
 
     // PUT: api/photos/{id}
     [HttpPut]
-    [Route("{id:int}")]
-    public IActionResult UpdatePhoto(int id, [FromBody] Photo photo)
+    [Route("")]
+    public IActionResult UpdatePhoto([FromBody] Photo photo)
     {
-        if (id != photo.Id) return BadRequest();
-        _photoRepository.UpdatePhoto(photo);
-        return Ok(photo);
+        try
+        {
+            _photoRepository.UpdatePhoto(photo);
+            return Ok(photo);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
     // DELETE: api/photos/{id}
@@ -60,7 +66,14 @@ public class PhotosController : ControllerBase
     [Route("{id:int}")]
     public IActionResult DeletePhoto(int id)
     {
-        _photoRepository.DeletePhoto(id);
-        return Ok();
+        try
+        {
+            _photoRepository.DeletePhoto(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }

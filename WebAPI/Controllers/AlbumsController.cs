@@ -60,7 +60,16 @@ public class AlbumsController : ControllerBase
     [Route("{id:int}")]
     public IActionResult DeleteAlbum(int id)
     {
-        _albumRepository.DeleteAlbum(id);
-        return Ok();
+        try
+        {
+
+
+            _albumRepository.DeleteAlbum(id);
+            return Ok();
+        }
+        catch (Exception ex) 
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }

@@ -57,12 +57,45 @@ Namespace Data
             End Using
         End Sub
 
-        Public Sub UpdatePhoto(album As Photo) Implements IPhotoRepository.UpdatePhoto
-            Throw New NotImplementedException()
+        Public Sub UpdatePhoto(photo As Photo) Implements IPhotoRepository.UpdatePhoto
+            Dim query As String = "UPDATE Photos SET Title = @Title, Url = @Url, AlbumId = @AlbumId, ThumbnailUrl = @ThumbnailUrl WHERE Id = @Id"
+
+            Using connection As New SqlConnection(_connectionString)
+                Using command As New SqlCommand(query, connection)
+
+                    command.Parameters.AddWithValue("@Id", photo.Id)
+                    command.Parameters.AddWithValue("@Title", photo.Title)
+                    command.Parameters.AddWithValue("@Url", photo.Url)
+                    command.Parameters.AddWithValue("@AlbumId", photo.AlbumId)
+                    command.Parameters.AddWithValue("@ThumbnailUrl", photo.ThumbnailUrl)
+
+                    connection.Open()
+                    Dim rowsAffected As Integer = command.ExecuteNonQuery()
+
+                    If rowsAffected = 0 Then
+                        Throw New Exception("No se encontró una foto con el ID especificado.")
+                    End If
+                End Using
+            End Using
         End Sub
 
         Public Sub DeletePhoto(id As Integer) Implements IPhotoRepository.DeletePhoto
-            Throw New NotImplementedException()
+            Dim query As String = "DELETE FROM Photos WHERE Id = @Id"
+
+            Using connection As New SqlConnection(_connectionString)
+                Using command As New SqlCommand(query, connection)
+
+                    command.Parameters.AddWithValue("@Id", id)
+
+                    connection.Open()
+
+                    Dim rowsAffected As Integer = command.ExecuteNonQuery()
+
+                    If rowsAffected = 0 Then
+                        Throw New Exception($"No se encontró ninguna foto con el ID {id} para eliminar.")
+                    End If
+                End Using
+            End Using
         End Sub
 
         Public Function GetPhotos(filterTitle As String, albumId As Integer?) As List(Of Photo) Implements IPhotoRepository.GetPhotos
@@ -70,7 +103,7 @@ Namespace Data
             Using conn As New SqlConnection(_connectionString)
 
                 conn.Open()
-                Dim query = "SELECT * FROM Photos WHERE (@Title IS NULL OR Title LIKE '%' + @Title + '%')
+                Dim query = "SELECT Id, AlbumId, Title, ThumbnailUrl, Url FROM Photos WHERE (@Title IS NULL OR Title LIKE '%' + @Title + '%')
                                                   AND (@AlbumId IS NULL OR AlbumId = @AlbumId)"
                 Using cmd As New SqlCommand(query, conn)
 
@@ -95,7 +128,33 @@ Namespace Data
         End Function
 
         Public Function GetPhotoById(id As Integer) As Photo Implements IPhotoRepository.GetPhotoById
-            Throw New NotImplementedException()
+            Dim query As String = "SELECT Id, Title, Url, AlbumId, ThumbnailUrl FROM Photos WHERE Id = @Id"
+
+            Using connection As New SqlConnection(_connectionString)
+                Using command As New SqlCommand(query, connection)
+
+                    command.Parameters.AddWithValue("@Id", id)
+
+                    connection.Open()
+
+                    Using reader As SqlDataReader = command.ExecuteReader()
+
+                        If reader.Read() Then
+
+                            Dim photo As New Photo With {
+                                .Id = reader.GetInt32(0),
+                                .Title = reader.GetString(1),
+                                .Url = reader.GetString(2),
+                                .AlbumId = reader.GetInt32(3),
+                                .ThumbnailUrl = reader.GetString(4)
+                            }
+                            Return photo
+                        Else
+                            Throw New Exception($"No se encontró ninguna foto con el ID {id}.")
+                        End If
+                    End Using
+                End Using
+            End Using
         End Function
     End Class
 End Namespace

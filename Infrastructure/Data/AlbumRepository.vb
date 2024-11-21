@@ -46,11 +46,42 @@ Namespace Data
         End Sub
 
         Public Sub UpdateAlbum(album As Album) Implements IAlbumRepository.UpdateAlbum
-            Throw New NotImplementedException()
+            Dim query As String = "UPDATE Albums SET Title = @Title, UserId = @UserId  WHERE Id = @Id"
+
+            Using connection As New SqlConnection(_connectionString)
+                Using command As New SqlCommand(query, connection)
+
+                    command.Parameters.AddWithValue("@Id", album.Id)
+                    command.Parameters.AddWithValue("@Title", album.Title)
+                    command.Parameters.AddWithValue("@UserId", album.UserId)
+
+                    connection.Open()
+                    Dim rowsAffected As Integer = command.ExecuteNonQuery()
+
+                    If rowsAffected = 0 Then
+                        Throw New Exception("No se encontró un album con el ID especificado.")
+                    End If
+                End Using
+            End Using
         End Sub
 
         Public Sub DeleteAlbum(id As Integer) Implements IAlbumRepository.DeleteAlbum
-            Throw New NotImplementedException()
+            Dim query As String = "DELETE FROM Albums WHERE Id = @Id"
+
+            Using connection As New SqlConnection(_connectionString)
+                Using command As New SqlCommand(query, connection)
+
+                    command.Parameters.AddWithValue("@Id", id)
+
+                    connection.Open()
+
+                    Dim rowsAffected As Integer = command.ExecuteNonQuery()
+
+                    If rowsAffected = 0 Then
+                        Throw New Exception($"No se encontró ningun album con el ID {id} para eliminar.")
+                    End If
+                End Using
+            End Using
         End Sub
 
         Public Function GetAlbums(filterTitle As String) As List(Of Album) Implements IAlbumRepository.GetAlbums
@@ -79,7 +110,31 @@ Namespace Data
         End Function
 
         Public Function GetAlbumById(id As Integer) As Album Implements IAlbumRepository.GetAlbumById
-            Throw New NotImplementedException()
+            Dim query As String = "SELECT Id, Title, UserId FROM Albums WHERE Id = @Id"
+
+            Using connection As New SqlConnection(_connectionString)
+                Using command As New SqlCommand(query, connection)
+
+                    command.Parameters.AddWithValue("@Id", id)
+
+                    connection.Open()
+
+                    Using reader As SqlDataReader = command.ExecuteReader()
+
+                        If reader.Read() Then
+
+                            Dim album As New Album With {
+                                .Id = reader.GetInt32(0),
+                                .Title = reader.GetString(1),
+                                .UserId = reader.GetInt32(2)
+                            }
+                            Return album
+                        Else
+                            Throw New Exception($"No se encontró ningun album con el ID {id}.")
+                        End If
+                    End Using
+                End Using
+            End Using
         End Function
     End Class
 End Namespace

@@ -14,7 +14,7 @@ namespace WebFormsApp.Controllers
             _apiService = apiService;
         }
 
-        public async Task<IActionResult> Index(string filterTitle)
+        public async Task<IActionResult> Index(string filterTitle, int? filterAlbum = null)
         {
             var photos = await _apiService.GetStoredPhotosAsync();
 
@@ -23,6 +23,11 @@ namespace WebFormsApp.Controllers
                 photos = photos.FindAll(a => a.Title.Contains(filterTitle, StringComparison.OrdinalIgnoreCase));
             }
 
+            if (filterAlbum != null)
+            {
+                photos = photos.FindAll(a => a.AlbumId.Equals(filterAlbum));
+
+            }
 
             var viewModel = new PhotoViewModel
             {
@@ -32,18 +37,9 @@ namespace WebFormsApp.Controllers
             };
 
             ViewData["filterTitle"] = filterTitle;
+            ViewData["filterAlbum"] = filterAlbum;
             return View(photos);
         }
-
-        //public async Task<IActionResult> Details(int photoId)
-        //{
-        //    var photos = await _apiService.GetPhotos();
-
-        //    photos = photos.FindAll(a => a.PhotoId.Equals(photoId));
-
-        //    return View(photos);
-        //}
-
 
         public async Task<IActionResult> AddPhoto(string title, int albumId)
         {
